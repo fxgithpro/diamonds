@@ -4,11 +4,10 @@ from sklearn.compose import ColumnTransformer, make_column_selector
 from sklearn.impute import SimpleImputer, KNNImputer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.base import BaseEstimator
-from sklearn.linear_model import LinearRegression, ElasticNet
+from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.svm import SVR
-from soupsieve import match
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score, mean_absolute_percentage_error
 
 
@@ -59,10 +58,28 @@ def create_preproc() -> Pipeline:
     return preprocessor
 
 def train_model(model, X_train, y_train):
+    """
+    Train the model 
+    """
     trained_model = model.fit(X_train, y_train)
     return trained_model
 
 def evaluate_model(model, X_test, y_test) -> dict[str, float]:
+    """
+    Launch a prediction and compute some metrics to evaluate
+    
+    Return
+    ------
+     A dictionnary with
+      - mean absolute error
+      - mean squared error
+      - r^2 score
+      - mean absolute percentage error
+      
+      Format of the dictionnary
+      {"mae":mae,"mse":mse,"r2":r2,"mape":mape}
+     
+    """
     # NB : mae, mse, r2_score, mape
     # Only print the metrics for now
     y_pred = model.predict(X_test)

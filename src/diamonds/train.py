@@ -3,11 +3,13 @@ from diamonds import model
 from diamonds import params
 from diamonds import registry
 from diamonds import logger
+from diamonds.params import MODEL_PATH
 
 import sys 
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
+
 
 def train(
     model_name: str = "baseline",
@@ -68,8 +70,8 @@ def train(
   
     # 4) Persistence
     print("Save data...")
-    registry.save_preproc(preprocessor,".")
-    registry.save_model(trained_model,".")
+    registry.save_preproc(preprocessor,MODEL_PATH)
+    registry.save_model(trained_model,MODEL_PATH)
     
     print("Model ready to be used!!!")
 

@@ -53,12 +53,13 @@ def train(
     print("Build preprocessor pipeline...")
     preprocessor = model.create_preproc()
     
-    print("Trained the model...")
+    print("Preprocessing the data...")
     preprocessor.fit(X_train)
     X_train_scaled = preprocessor.transform(X_train)
     X_test_scaled  = preprocessor.transform(X_test)
     
     #Train the model 
+    print("Trained the model...")
     trained_model = model.train_model(built_model,X_train_scaled,y_train)
     
     # 3) Evaluation

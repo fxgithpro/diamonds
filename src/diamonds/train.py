@@ -27,9 +27,9 @@ def train(
     """
     # 1) Data
     print("Load data...")
-    df_data = data.load_data(params.MODEL_REGISTRY=="local")
+    df_data = data.load_data(False)
     
-    if df_data.size() == 0:
+    if df_data.size == 0:
         logger.warning("Empty data set")
         sys.exit(1)
     
@@ -51,14 +51,10 @@ def train(
     if built_model is None or type(built_model)!=RandomForestRegressor:
         logger.error("The model built is not from the expected type")
         sys.exit(1)
-        
-    print("Build preprocessor pipeline...")
-    preprocessor = model.create_preproc()
     
     print("Preprocessing the data...")
-    preprocessor.fit(X_train)
-    X_train_scaled = preprocessor.transform(X_train)
-    X_test_scaled  = preprocessor.transform(X_test)
+    X_train_scaled = data.preprocess_data(X_train)
+    X_test_scaled  = data.preprocess_data(X_test)
     
     #Train the model 
     print("Trained the model...")
@@ -69,8 +65,7 @@ def train(
     model.evaluate_model(trained_model,X_test_scaled,y_test)
   
     # 4) Persistence
-    print("Save data...")
-    registry.save_preproc(preprocessor,MODEL_PATH)
+    print("Save model...")
     registry.save_model(trained_model,MODEL_PATH)
     
     print("Model ready to be used!!!")

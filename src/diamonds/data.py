@@ -7,6 +7,11 @@ from sklearn.compose import ColumnTransformer, make_column_selector
 from sklearn.impute import SimpleImputer, KNNImputer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
+from diamonds import logger
+from diamonds.model import create_preproc
+from diamonds.registry import load_prepoc,save_preproc
+from diamonds.params import MODEL_PATH
+
 def load_data(cache = True) -> pd.DataFrame:
     """
     Load the diamonds dataset.
@@ -41,13 +46,23 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
         The cleaned diamonds dataset
     """
     print("Cleaning the diamonds dataset...")
+    # Remove null entries
     num_rows_with_na = df.isna().any(axis=1).sum()
     df = df.dropna()
-    print(f"Number of rows with missing values: {num_rows_with_na}")
+    logger.info(f"Number of rows with missing values: {num_rows_with_na}")
+    
+    # Remove the rows containing '0' in one cell 
+    rows = len(df)
+    def keep_not_null(row) :
+        if 0 in row.values : return False
+        return True
+    
+    df_clean = df[df.apply(keep_not_null,axis=1)]
+    logger.info(f"Cleaned the rows {rows} rows : {len(df_clean)}")
 
     return df
 
-def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
+def preprocess_data(df: pd.DataFrame, train=False) -> pd.DataFrame:
     """
     Preprocess the diamonds dataset.
 
@@ -62,28 +77,16 @@ def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
         The preprocessed diamonds dataset
     """
     print("Preprocessing the diamonds dataset...")
-    # Implement preprocessing steps here (e.g., encoding categorical variables, feature engineering, etc.)
-    df_cat = df.select_dtypes(include="category")
-    print(df_cat.describe())
-    cat_pipe = Pipeline(
-    [ ("cat_imp",SimpleImputer(strategy="most_frequent"))
-      ,("ohe",OneHotEncoder(drop="first",sparse_output=False))
-        ])
-
-    num_pipe = Pipeline(
-    [("knn_imp", KNNImputer(n_neighbors=5))
-     ,("scaler", StandardScaler())
-      ])
-    
-    preprocessor = ColumnTransformer(
-    [("numeric",num_pipe, make_column_selector(dtype_include="number"))
-    ,("categorical", cat_pipe, make_column_selector(dtype_exclude="number"))
-      ]).set_output(transform="pandas")
-
-    df_processed = preprocessor.fit_transform(df)
+    # Allow the reuse the previous built pipeline 
+    if not train:
+        preprocessor = create_preproc()
+        preprocessor = preprocessor.fit(df)
+        save_preproc(preprocessor,MODEL_PATH)
+    else:
+        preprocessor = load_prepoc()
+        
+    df_processed = preprocessor.transform(df)
     print("Preprocessing completed.")
-
-    print(df_processed.head())
 
     return df_processed
 

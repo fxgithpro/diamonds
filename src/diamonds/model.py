@@ -10,20 +10,23 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.svm import SVR
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score, mean_absolute_percentage_error
 
+from diamonds import logger
 
-def create_model(model_name: str) -> BaseEstimator:
+
+def create_model(model_name: str = "LinearRegression") -> BaseEstimator:
     """
     Create an untrained model with the best hyperparameters found during tuning.
 
     Parameters
     ----------
     model_name : str
-        The name of the model (e.g. "ridge", "random_forest")
+        The name of the model ("LinearRegression", "random_forest", "KNN", "SVR)
+        default value "LinearRegression"
 
     Returns
     -------
     BaseEstimator
-        The model ready to be fitted
+        The model ready to be fitted if the model_name is known and None otherwise
     """ 
 
     if model_name == "LinearRegression":
@@ -34,7 +37,9 @@ def create_model(model_name: str) -> BaseEstimator:
         return KNeighborsRegressor(n_neighbors=5)
     elif model_name == "SVR":
         return SVR(kernel='rbf', C=1.0, epsilon=0.1)
-    else : return None
+    else :
+        logger.warning(f"model {model_name} is unknown") 
+        return None
 
 def create_preproc() -> Pipeline:
     """
@@ -63,8 +68,8 @@ def train_model(model, X_train, y_train):
     
     Parameters
     ----------
-        - X_train : input data to use for training the model
-        - y_train : expected results
+    X_train : input data to use for training the model
+    y_train : expected results
         
     Returns
     -------
@@ -122,12 +127,20 @@ def predict(model, X):
 if __name__ == "__main__":
     import seaborn as sns
     print("Creating model...")
+    
+    print("Create an unknown model")
+    model = create_model("Grosminet")
+    if model is None:
+        print("Unknown model")
+    
     model = create_model("random_forest")
+    if type(model) == RandomForestRegressor:
+        print("Random forest model built")
     print(model)
     print("Creating preprocessor...")
-    toto =sns.load_dataset("diamonds")
-    titi=toto.drop(columns=["price"])
+    df_diamonds =sns.load_dataset("diamonds")
+    df_inputs=df_diamonds.drop(columns=["price"])
     preprocessor= create_preproc()
-    tata=preprocessor.fit_transform(titi)
-    print(tata)
+    df_preproc=preprocessor.fit_transform(df_inputs)
+    print(df_preproc)
     print(preprocessor)

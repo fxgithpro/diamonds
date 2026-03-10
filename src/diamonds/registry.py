@@ -2,10 +2,20 @@ import os
 import pickle
 
 from sklearn.base import BaseEstimator
+from sklearn.pipeline import Pipeline
 from diamonds import logger
 from diamonds.params import MODEL_REGISTRY 
 
-def save_model(model, path):
+def save_preproc(preproc:Pipeline, path):
+    """Save the preprocessor to the specified path."""
+    # Check the existence 
+    if not os.path.exists(path) :
+        os.mkdir(path)
+        
+    with open(os.path.join(path,"preproc.pkl"),"wb") as savefile:
+        pickle.dump(preproc,savefile)
+        
+def save_model(model : BaseEstimator, path):
     """Save the model to the specified path."""
     # Check the existence 
     if not os.path.exists(path) :
@@ -28,6 +38,19 @@ def load_model(path) -> BaseEstimator:
     
     return model
 
+def load_prepoc(path) -> Pipeline:
+    """Load the preproc from the specified path."""
+    # Implement the logic to load the preproc (e.g., using pickle, joblib, etc.)
+    if not os.path.exists(os.path.join(path,"preproc.pkl")) :
+        logger.error("No  preprocessor to load")
+        return None
+        
+    model = None
+    with open(os.path.join(path,"preproc.pkl"),"rb") as datafile:
+        model = pickle.load(datafile)
+    
+    return model
+
 if __name__ == "__main__" :
     from sklearn.linear_model import LinearRegression
     
@@ -39,8 +62,8 @@ if __name__ == "__main__" :
     print(f"{type(linear_reg_obj_loaded)}")
     
     if type(linear_reg_obj) == type(linear_reg_obj_loaded):
-        print("Success")
+        print("Load of the train model : Success")
     else:
-        print("Fail")
+        print("Load of the train model : Fail")
     
     

@@ -31,9 +31,11 @@ def train(
         sys.exit(1)
     
     df_clean = data.clean_data(df_data)
-    df_preproc = data.preprocess_data(df_clean)
     
-    X,y = data.create_X_y(df_preproc)
+    X,y = data.create_X_y(df_clean)
+    
+    # Not necessary because the preprocessing is done further
+    #df_preproc = data.preprocess_data(df_clean)
     
     X_train, X_test, y_train, y_test  = train_test_split(X,y, random_state=42)
   

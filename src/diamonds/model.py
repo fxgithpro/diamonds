@@ -60,6 +60,15 @@ def create_preproc() -> Pipeline:
 def train_model(model, X_train, y_train):
     """
     Train the model 
+    
+    Parameters
+    ----------
+        - X_train : input data to use for training the model
+        - y_train : expected results
+        
+    Returns
+    -------
+        The trained model
     """
     trained_model = model.fit(X_train, y_train)
     return trained_model
@@ -68,8 +77,8 @@ def evaluate_model(model, X_test, y_test) -> dict[str, float]:
     """
     Launch a prediction and compute some metrics to evaluate
     
-    Return
-    ------
+    Returns
+    -------
      A dictionnary with
       - mean absolute error
       - mean squared error

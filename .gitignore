@@ -2,6 +2,7 @@
 .venv/
 .python-version
 .ipynb_checkpoints/
+__pycache__/
 
 # Data
 data/
@@ -14,6 +15,9 @@ models/
 # Env
 .env
 .envrc
+
+# vscode
+.vscode/
 
 # Mlflow
 mlruns/

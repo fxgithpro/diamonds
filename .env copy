@@ -1,1 +1,2 @@
 MODEL_REGISTRY = "local"
+MLFLOW_TRACKING_URI = "http://localhost:5000"

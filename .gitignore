@@ -3,6 +3,7 @@
 .python-version
 .ipynb_checkpoints/
 __pycache__/
+*.pyc
 
 # Data
 data/
@@ -15,6 +16,9 @@ models/
 # Env
 .env
 .envrc
+
+# Local
+local/
 
 # vscode
 .vscode/

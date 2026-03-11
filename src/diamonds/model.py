@@ -7,10 +7,13 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score, mean_absolute_percentage_error
 
 import loguru
+import mlflow
 
 from diamonds.registry import save_model, load_model
+from diamonds.params import MODEL_REGISTRY
 
 logger = loguru.logger
+
 
 def create_model(model_name: str) -> BaseEstimator:
     """
@@ -27,6 +30,9 @@ def create_model(model_name: str) -> BaseEstimator:
         The model ready to be fitted
     """
     model = RandomForestRegressor(n_estimators=50, max_depth=10)
+    
+    mlflow.log_params(model.get_params())
+    
     logger.info(f"Created the model: {model_name}")
     return model
 
@@ -51,7 +57,7 @@ def create_preproc() -> Pipeline:
 def train_model(model, X_train, y_train , save: bool = True) -> None:
     """Train the model in place and save it."""
     model.fit(X_train, y_train)
-    if save: save_model(model, "model")
+    if save: save_model(model, "model",registry=MODEL_REGISTRY)
 
 def evaluate_model(model, X_test, y_test) -> dict[str, float]:
     # NB : mae, mse, r2_score, mape
@@ -62,5 +68,8 @@ def evaluate_model(model, X_test, y_test) -> dict[str, float]:
     r2 = r2_score(y_test, y_pred)
     mape = mean_absolute_percentage_error(y_test, y_pred)
     logger.info(f"Evaluation metrics: MAE={mae:.2f}, MSE={mse:.2f}, R2={r2:.2f}, MAPE={mape:.2%}")
-    return {"mae": mae, "mse": mse, "r2": r2, "mape": mape}
+    metrics = {"mae": mae, "mse": mse, "r2": r2, "mape": mape}
+    mlflow.log_metrics(metrics)
+    
+    return metrics
 

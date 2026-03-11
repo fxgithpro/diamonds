@@ -3,6 +3,9 @@ from diamonds.data import (load_data, clean_data
 from diamonds.model import create_model, train_model, evaluate_model
 from diamonds.registry import save_model, load_model
 
+from diamonds.params import MLFLOW_TRACKING_URI
+
+import mlflow
 
 def train(
     model_name: str = "baseline",
@@ -18,18 +21,26 @@ def train(
     - build the model and preprocessing
     - train, evaluate, and save the trained model
     """
-    # 1) Data
-    df = load_data()
-    df_clean = clean_data(df)
-    # 2) Model + preprocessing
-    X,y = create_X_y(df_clean)
-    X_train_preproc = preprocess_data(X_train, train=True)
-    X_test_preproc = preprocess_data(X_test, train=False)
     
-    model = create_model(model_name)
-    train_model(model, X_train_preproc, y_train)
-    # 3) Evaluation
-    evaluate_model(model, X_test_preproc, y_test)
+    mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+    mlflow.set_experiment("diamonds")
+    
+    with mlflow.start_run():
+    # A possibility 
+    #    mlflow.autolog()
+        
+        # 1) Data
+        df = load_data()
+        df_clean = clean_data(df)
+        # 2) Model + preprocessing
+        X_train, X_test, y_train, y_test = create_X_y(df_clean,test_size=test_size,random_state=random_state)
+        X_train_preproc = preprocess_data(X_train, train=True)
+        X_test_preproc = preprocess_data(X_test, train=False)
+        
+        model = create_model(model_name)
+        train_model(model, X_train_preproc, y_train)
+        # 3) Evaluation
+        evaluate_model(model, X_test_preproc, y_test)
 
 
 if __name__ == "__main__":

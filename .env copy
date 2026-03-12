@@ -1,2 +1,9 @@
 MODEL_REGISTRY = "local"
 MLFLOW_TRACKING_URI = "http://localhost:5000"
+
+LOCATION=europe-west1                    # Your GCP region
+PROJECT_ID=your-project-id               # Your GCP project ID
+REPOSITORY=your-artifact-registry        # Your Artifact Registry name
+IMAGE=minesweeper                        # Your image name
+PORT=8080                                # Application port
+HOST_PORT=8888

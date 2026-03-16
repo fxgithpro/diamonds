@@ -8,7 +8,7 @@ try:
     exchange_rates = load_exchange_rates()
 except Exception as e:
     #st.error(f"Failed to load exchange rates: {e}")
-    exchange_rates = {'USD': 1.0}  # Fallback
+    exchange_rates = {'USD': 1.0,'EUR':0.87}  # Fallback
 
 # API base URL from environment variable (defaults to localhost if not set)
 #API_BASE_URL = os.environ.get("API_BASE_URL", "https://diamonds-861302064365.europe-west1.run.app")

@@ -55,8 +55,8 @@ push_gcp: build_gcp
 	docker push ${LOCATION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${IMAGE}
 
 auth_gcp:
-	gcp auth login
-	gcp config set config ${PROJECT_ID}
+	gcloud auth login
+	gcloud config set project ${PROJECT_ID}
 
 deploy:
-	gcloud run deploy ${IMAGE} --image ${LOCATION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${IMAGE} --region ${LOCATION} --platform managed --allow-unauthorized
+	gcloud run deploy ${IMAGE} --image ${LOCATION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${IMAGE} --region ${LOCATION} --platform managed --allow-unauthenticated

@@ -11,8 +11,9 @@ except Exception as e:
     exchange_rates = {'USD': 1.0}  # Fallback
 
 # API base URL from environment variable (defaults to localhost if not set)
-API_BASE_URL = os.environ.get("API_BASE_URL", "https://diamonds-861302064365.europe-west1.run.app")
-API_URL = f"{API_BASE_URL}/price"
+#API_BASE_URL = os.environ.get("API_BASE_URL", "https://diamonds-861302064365.europe-west1.run.app")
+API_BASE_URL = "https://diamonds-861302064365.europe-west1.run.app"
+API_URL = f"{API_BASE_URL}/predict_one"
 
 # Categorical options based on standard diamonds dataset
 CUT_OPTIONS = ["Fair", "Good", "Very Good", "Premium", "Ideal"]
